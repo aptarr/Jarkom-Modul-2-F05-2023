@@ -1,3 +1,382 @@
+# Jarkom-Modul-2-F05-2023
+Apta Rasendriya Wijaya - 5025211139
+Made Nanda Wija Vahindra - 5025211160
+
+### soal 1.
+Pada soal diminta membuat topologi dan konfigurasinya dimana pada kelompok kami mendapatkan topologi ke 5 dan berikur topologi yang kami buat
+
+![image](https://github.com/aptarr/Jarkom-Modul-2-F05-2023/assets/116022017/3b0db63e-88cb-45b0-86b9-0e71e080a393)
+
+dengan konfiguransi sebagai berikut
+
+Pandudewanata:
+```
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+    address 10.54.1.1
+    netmask 255.255.255.0
+
+auto eth2
+iface eth2 inet static
+    address 10.54.2.1
+    netmask 255.255.255.0
+
+auto eth3
+iface eth3 inet static
+    address 10.54.3.1
+    netmask 255.255.255.0
+```
+Nakula:
+```
+auto eth0
+iface eth0 inet static
+    address 10.54.1.2
+    netmask 255.255.255.0
+    gateway 10.54.1.1
+```
+
+Sadewa:
+```
+auto eth0
+iface eth0 inet static
+    address 10.54.1.3
+    netmask 255.255.255.0
+    gateway 10.54.1.1
+```
+
+Yudistira:
+```
+auto eth0
+iface eth0 inet static
+    address 10.54.2.2
+    netmask 255.255.255.0
+    gateway 10.54.2.1
+```
+
+Werkudara:
+```
+auto eth0
+iface eth0 inet static
+    address 10.54.2.3
+    netmask 255.255.255.0
+    gateway 10.54.2.1
+```
+
+Arjuna:
+```
+auto eth0
+iface eth0 inet static
+    address 10.54.3.2
+    netmask 255.255.255.0
+    gateway 10.54.3.1
+```
+
+Wisanggeni:
+```
+auto eth0
+iface eth0 inet static
+    address 10.54.3.3
+    netmask 255.255.255.0
+    gateway 10.54.3.1
+```
+
+Abimanyu:
+```
+auto eth0
+iface eth0 inet static
+    address 10.54.3.4
+    netmask 255.255.255.0
+    gateway 10.54.3.1
+```
+
+Prabukusuma:
+```
+auto eth0
+iface eth0 inet static
+    address 10.54.3.5
+    netmask 255.255.255.0
+    gateway 10.54.3.1
+```
+
+### soal 2.
+Pada soal diminta membuat DNS node arjuna yaitu arjuna.f05.com dengan alias www.arjuna.f05.com pada node yudhistira, untuk melakukan konfigurasi tersebut hanya dengan run script berikut di yudhistira:
+
+```
+#!/bin/bash
+echo 'nameserver 192.168.122.1' > /etc/resolv.conf
+
+apt-get update
+
+apt-get install bind9 -y
+
+echo 'zone "arjuna.f05.com" {' > /etc/bind/named.conf.local
+echo '    type master;' >> /etc/bind/named.conf.local
+echo '    file "/etc/bind/jarkom/arjuna.f05.com";' >> /etc/bind/named.conf.local
+echo '};' >> /etc/bind/named.conf.local
+
+mkdir /etc/bind/jarkom
+
+cp /etc/bind/db.local /etc/bind/jarkom/arjuna.f05.com
+
+echo ';' > /etc/bind/jarkom/arjuna.f05.com
+echo '; BIND data file for local loopback interface' >> /etc/bind/jarkom/arjuna.f05.com
+echo ';' >> /etc/bind/jarkom/arjuna.f05.com
+echo '$TTL    604800' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      SOA     arjuna.f05.com. root.arjuna.f05.com. (' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                              2         ; Serial' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                         604800         ; Refresh' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                          86400         ; Retry' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                        2419200         ; Expire' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                         604800 )       ; Negative Cache TTL' >> /etc/bind/jarkom/arjuna.f05.com
+echo ';' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      NS      arjuna.f05.com.' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      A       10.54.3.2' >> /etc/bind/jarkom/arjuna.f05.com
+echo 'www     IN      CNAME   arjuna.f05.com.' >> /etc/bind/jarkom/arjuna.f05.com
+
+service bind9 restart
+```
+dimana untuk mengeset namaserver menggunamakan NS, CNAME untuk aliasnya, A untuk mengarahkan IP DNS ke arjuna. Untuk melakukan pengecekan bahwa konfigurasi benar atau salah kita perlu mengatur konfigurasi pada node dengan menjalankan script berikut:
+```
+echo 'nameserver 10.54.2.2 #Yudistira' > /etc/resolv.conf
+```
+```
+ping arjuna.f05.com -c 4
+ping www.arjuna.f05.com -c 4
+```
+Hasil:
+![image](https://github.com/aptarr/Jarkom-Modul-2-F05-2023/assets/116022017/5da89161-c377-4c9d-aa05-2ea2841d3272)
+
+### soal 3.
+Pada soal diminta membuat DNS node arjuna yaitu abimanyu.f05.com dengan alias www.abimanyu.f05.com pada node yudhistira, untuk melakukan konfigurasi tersebut hanya dengan run script berikut:
+
+```
+#!/bin/bash
+echo 'nameserver 192.168.122.1' > /etc/resolv.conf
+
+apt-get update
+
+apt-get install bind9 -y
+
+echo 'zone "arjuna.f05.com" {' > /etc/bind/named.conf.local
+echo '    type master;' >> /etc/bind/named.conf.local
+echo '    file "/etc/bind/jarkom/arjuna.f05.com";' >> /etc/bind/named.conf.local
+echo '};' >> /etc/bind/named.conf.local
+
+echo 'zone "abimanyu.f05.com" {' >> /etc/bind/named.conf.local
+echo '    type master;' >> /etc/bind/named.conf.local
+echo '    file "/etc/bind/jarkom/abimanyu.f05.com";' >> /etc/bind/named.conf.local
+echo '};' >> /etc/bind/named.conf.local
+
+mkdir /etc/bind/jarkom
+
+cp /etc/bind/db.local /etc/bind/jarkom/arjuna.f05.com
+
+echo ';' > /etc/bind/jarkom/arjuna.f05.com
+echo '; BIND data file for local loopback interface' >> /etc/bind/jarkom/arjuna.f05.com
+echo ';' >> /etc/bind/jarkom/arjuna.f05.com
+echo '$TTL    604800' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      SOA     arjuna.f05.com. root.arjuna.f05.com. (' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                              2         ; Serial' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                         604800         ; Refresh' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                          86400         ; Retry' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                        2419200         ; Expire' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                         604800 )       ; Negative Cache TTL' >> /etc/bind/jarkom/arjuna.f05.com
+echo ';' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      NS      arjuna.f05.com.' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      A       10.54.3.2' >> /etc/bind/jarkom/arjuna.f05.com
+echo 'www     IN      CNAME   arjuna.f05.com.' >> /etc/bind/jarkom/arjuna.f05.com
+
+echo ';' > /etc/bind/jarkom/abimanyu.f05.com
+echo '; BIND data file for local loopback interface' >> /etc/bind/jarkom/abimanyu.f05.com
+echo ';' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '$TTL    604800' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '@       IN      SOA     abimanyu.f05.com. root.abimanyu.f05.com. (' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                              2         ; Serial' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                         604800         ; Refresh' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                          86400         ; Retry' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                        2419200         ; Expire' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                         604800 )       ; Negative Cache TTL' >> /etc/bind/jarkom/abimanyu.f05.com
+echo ';' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '@       IN      NS      abimanyu.f05.com.' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '@       IN      A       10.54.3.4' >> /etc/bind/jarkom/abimanyu.f05.com
+echo 'www     IN      CNAME   abimanyu.f05.com.' >> /etc/bind/jarkom/abimanyu.f05.com
+
+service bind9 restart
+```
+dimana untuk mengeset namaserver menggunamakan NS, CNAME untuk aliasnya, A untuk mengarahkan IP DNS ke abimanyu. Untuk melakukan pengecekan bahwa konfigurasi benar atau salah kita perlu mengatur konfigurasi pada node dengan menjalankan script berikut:
+```
+echo 'nameserver 10.54.2.2 #Yudistira' > /etc/resolv.conf
+```
+```
+ping abimanyu.f05.com -c 5
+ping ping www.abimanyu.f05.com -c 5
+```
+Hasil:
+![image](https://github.com/aptarr/Jarkom-Modul-2-F05-2023/assets/116022017/e376b391-163d-4cc3-b507-99575b2f54f4)
+
+### soal 4.
+Pada soal diminta membuat subdomain parikesit.abimanyu.f05.com pada node yudhistira, untuk melakukan konfigurasi tersebut hanya dengan run script berikut:
+```
+#!/bin/bash
+echo 'nameserver 192.168.122.1' > /etc/resolv.conf
+
+apt-get update
+
+apt-get install bind9 -y
+
+echo 'zone "arjuna.f05.com" {' > /etc/bind/named.conf.local
+echo '    type master;' >> /etc/bind/named.conf.local
+echo '    file "/etc/bind/jarkom/arjuna.f05.com";' >> /etc/bind/named.conf.local
+echo '};' >> /etc/bind/named.conf.local
+
+echo 'zone "abimanyu.f05.com" {' >> /etc/bind/named.conf.local
+echo '    type master;' >> /etc/bind/named.conf.local
+echo '    file "/etc/bind/jarkom/abimanyu.f05.com";' >> /etc/bind/named.conf.local
+echo '};' >> /etc/bind/named.conf.local
+
+mkdir /etc/bind/jarkom
+
+cp /etc/bind/db.local /etc/bind/jarkom/arjuna.f05.com
+
+echo ';' > /etc/bind/jarkom/arjuna.f05.com
+echo '; BIND data file for local loopback interface' >> /etc/bind/jarkom/arjuna.f05.com
+echo ';' >> /etc/bind/jarkom/arjuna.f05.com
+echo '$TTL    604800' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      SOA     arjuna.f05.com. root.arjuna.f05.com. (' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                              2         ; Serial' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                         604800         ; Refresh' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                          86400         ; Retry' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                        2419200         ; Expire' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                         604800 )       ; Negative Cache TTL' >> /etc/bind/jarkom/arjuna.f05.com
+echo ';' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      NS      arjuna.f05.com.' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      A       10.54.3.2' >> /etc/bind/jarkom/arjuna.f05.com
+echo 'www     IN      CNAME   arjuna.f05.com.' >> /etc/bind/jarkom/arjuna.f05.com
+
+echo ';' > /etc/bind/jarkom/abimanyu.f05.com
+echo '; BIND data file for local loopback interface' >> /etc/bind/jarkom/abimanyu.f05.com
+echo ';' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '$TTL    604800' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '@       IN      SOA     abimanyu.f05.com. root.abimanyu.f05.com. (' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                              2         ; Serial' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                         604800         ; Refresh' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                          86400         ; Retry' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                        2419200         ; Expire' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                         604800 )       ; Negative Cache TTL' >> /etc/bind/jarkom/abimanyu.f05.com
+echo ';' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '@         IN      NS      abimanyu.f05.com.' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '@         IN      A       10.54.3.4' >> /etc/bind/jarkom/abimanyu.f05.com
+echo 'www       IN      CNAME   abimanyu.f05.com.' >> /etc/bind/jarkom/abimanyu.f05.com
+echo 'parikesit IN      A       10.54.3.4' >> /etc/bind/jarkom/abimanyu.f05.com
+
+service bind9 restart
+```
+dimana untuk mengeset subdomain hanya menggunakan A yang di set ke IP dari domain utama. Untuk melakukan pengecekan bahwa konfigurasi benar atau salah kita perlu mengatur konfigurasi pada node dengan menjalankan script berikut:
+```
+echo 'nameserver 10.54.2.2 #Yudistira' > /etc/resolv.conf
+```
+```
+ping parikesit.abimanyu.f05.com -c 4
+```
+Hasil:
+![image](https://github.com/aptarr/Jarkom-Modul-2-F05-2023/assets/116022017/e924cb64-c206-40b6-a77d-9458d072d471)
+
+### soal 5.
+Pada soal diminta membuat reverse DNS dari abimanyu, untuk melakukan konfigurasi tersebut hanya dengan run script berikut:
+```
+#!/bin/bash
+echo 'nameserver 192.168.122.1' > /etc/resolv.conf
+
+apt-get update
+
+apt-get install bind9 -y
+
+echo 'zone "arjuna.f05.com" {' > /etc/bind/named.conf.local
+echo '    type master;' >> /etc/bind/named.conf.local
+echo '    file "/etc/bind/jarkom/arjuna.f05.com";' >> /etc/bind/named.conf.local
+echo '};' >> /etc/bind/named.conf.local
+
+echo 'zone "abimanyu.f05.com" {' >> /etc/bind/named.conf.local
+echo '    type master;' >> /etc/bind/named.conf.local
+echo '    file "/etc/bind/jarkom/abimanyu.f05.com";' >> /etc/bind/named.conf.local
+echo '};' >> /etc/bind/named.conf.local
+
+echo 'zone "3.54.10.in-addr.arpa" {' >> /etc/bind/named.conf.local
+echo '    type master;' >> /etc/bind/named.conf.local
+echo '    file "/etc/bind/jarkom/3.54.10.in-addr.arpa";' >> /etc/bind/named.conf.local
+echo '};' >> /etc/bind/named.conf.local
+
+mkdir /etc/bind/jarkom
+
+cp /etc/bind/db.local /etc/bind/jarkom/arjuna.f05.com
+
+echo ';' > /etc/bind/jarkom/arjuna.f05.com
+echo '; BIND data file for local loopback interface' >> /etc/bind/jarkom/arjuna.f05.com
+echo ';' >> /etc/bind/jarkom/arjuna.f05.com
+echo '$TTL    604800' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      SOA     arjuna.f05.com. root.arjuna.f05.com. (' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                              2         ; Serial' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                         604800         ; Refresh' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                          86400         ; Retry' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                        2419200         ; Expire' >> /etc/bind/jarkom/arjuna.f05.com
+echo '                         604800 )       ; Negative Cache TTL' >> /etc/bind/jarkom/arjuna.f05.com
+echo ';' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      NS      arjuna.f05.com.' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      A       10.54.3.2' >> /etc/bind/jarkom/arjuna.f05.com
+echo 'www     IN      CNAME   arjuna.f05.com.' >> /etc/bind/jarkom/arjuna.f05.com
+echo '@       IN      AAAA    ::1' >> /etc/bind/jarkom/arjuna.f05.com
+
+echo ';' > /etc/bind/jarkom/abimanyu.f05.com
+echo '; BIND data file for local loopback interface' >> /etc/bind/jarkom/abimanyu.f05.com
+echo ';' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '$TTL    604800' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '@       IN      SOA     abimanyu.f05.com. root.abimanyu.f05.com. (' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                              2         ; Serial' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                         604800         ; Refresh' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                          86400         ; Retry' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                        2419200         ; Expire' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '                         604800 )       ; Negative Cache TTL' >> /etc/bind/jarkom/abimanyu.f05.com
+echo ';' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '@         IN      NS      abimanyu.f05.com.' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '@         IN      A       10.54.3.4' >> /etc/bind/jarkom/abimanyu.f05.com
+echo 'www       IN      CNAME   abimanyu.f05.com.' >> /etc/bind/jarkom/abimanyu.f05.com
+echo 'parikesit IN      A       10.54.3.4' >> /etc/bind/jarkom/abimanyu.f05.com
+echo '@         IN      AAAA    ::1' >> /etc/bind/jarkom/abimanyu.f05.com
+
+cp /etc/bind/db.local /etc/bind/jarkom/3.54.10.in-addr.arpa
+
+echo ';' > /etc/bind/jarkom/3.54.10.in-addr.arpa
+echo '; BIND data file for local loopback interface' >> /etc/bind/jarkom/3.54.10.in-addr.arpa
+echo ';' >> /etc/bind/jarkom/3.54.10.in-addr.arpa
+echo '$TTL    604800' >> /etc/bind/jarkom/3.54.10.in-addr.arpa
+echo '@       IN      SOA     arjuna.f05.com. root.arjuna.f05.com. (' >> /etc/bind/jarkom/3.54.10.in-addr.arpa
+echo '                              2         ; Serial' >> /etc/bind/jarkom/3.54.10.in-addr.arpa
+echo '                         604800         ; Refresh' >> /etc/bind/jarkom/3.54.10.in-addr.arpa
+echo '                          86400         ; Retry' >> /etc/bind/jarkom/3.54.10.in-addr.arpa
+echo '                        2419200         ; Expire' >> /etc/bind/jarkom/3.54.10.in-addr.arpa
+echo '                         604800 )       ; Negative Cache TTL' >> /etc/bind/jarkom/3.54.10.in-addr.arpa
+echo ';' >> /etc/bind/jarkom/3.54.10.in-addr.arpa
+echo '3.54.10.in-addr.arpa. IN      NS      abimanyu.f05.com.' >> /etc/bind/jarkom/3.54.10.in-addr.arpa
+echo '4                     IN      PTR     abimanyu.f05.com. ; Byte ke-4 Yudistira' >> /etc/bind/jarkom/3.54.10.in-addr.arpa
+
+service bind9 restart
+```
+dimana untuk mengeset reverse DNS menambahkan konfigurasi baru seperti script diatas. Untuk melakukan pengecekan bahwa konfigurasi benar atau salah kita perlu mengatur konfigurasi pada node dengan menjalankan script berikut:
+```
+echo 'nameserver 192.168.122.1' > /etc/resolv.conf
+apt-get update
+apt-get install dnsutils -y
+echo 'nameserver 10.54.2.2' > /etc/resolv.conf
+```
+```
+host -t PTR 10.54.3.4
+```
+Hasil:
+![image](https://github.com/aptarr/Jarkom-Modul-2-F05-2023/assets/116022017/e924cb64-c206-40b6-a77d-9458d072d471)
+
 ### 11.
 
 Melakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.f05.com dengan document root /var/www/abimanyu.f05.  
